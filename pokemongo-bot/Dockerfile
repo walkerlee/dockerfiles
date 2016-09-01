@@ -3,22 +3,19 @@ MAINTAINER Walker Lee <walkerlee.tw@gmail.com>
 
 ARG BUILD_REPO=PokemonGoF/PokemonGo-Bot
 ARG BUILD_BRANCH=master
-ARG TIMEZONE=Etc/UTC
 
 LABEL build_repo=$BUILD_REPO build_branch=$BUILD_BRANCH
 
 WORKDIR /usr/src/app
 VOLUME ["/usr/src/app/configs", "/usr/src/app/web"]
 
-RUN apk -U --no-cache add python py-pip \
+RUN apk -U --no-cache add python py-pip tzdata \
     && rm -rf /var/cache/apk/* \
     && find / -name '*.pyc' -o -name '*.pyo' | xargs -rn1 rm -f
 
 ADD http://pgoapi.com/pgoencrypt.tar.gz /tmp/pgoencrypt.tar.gz
 ADD https://raw.githubusercontent.com/$BUILD_REPO/$BUILD_BRANCH/requirements.txt .
-RUN apk -U --no-cache add --virtual .build-dependencies python-dev gcc make musl-dev git tzdata \
-    && cp -fa /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
-    && echo $TIMEZONE > /etc/timezone \
+RUN apk -U --no-cache add --virtual .build-dependencies python-dev gcc make musl-dev git \
     && tar zxf /tmp/pgoencrypt.tar.gz -C /tmp \
     && make -C /tmp/pgoencrypt/src \
     && cp /tmp/pgoencrypt/src/libencrypt.so /usr/src/app/encrypt.so \
