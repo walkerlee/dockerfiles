@@ -8,4 +8,4 @@ RUN apk add --no-cache python3 && \
 	test -e /usr/bin/python || ln -s python3 /usr/bin/python && \
 	find / -name '__pycache__' | xargs -rn1 rm -rf
 
-CMD ["/usr/bin/python3"]
+CMD ["/usr/bin/python"]
