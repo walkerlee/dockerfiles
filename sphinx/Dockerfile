@@ -1,4 +1,4 @@
-FROM walkerlee/python3
+FROM walkerlee/python
 
 RUN apk add --no-cache tini make && \
 	pip install --no-cache-dir Sphinx sphinx-rtd-theme sphinx-autobuild sphinxcontrib-httpdomain
