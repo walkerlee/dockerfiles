@@ -1,17 +1,14 @@
-FROM walkerlee/python
+FROM walkerlee/python3
 
-RUN apk add --no-cache nginx supervisor inotify-tools make bash && \
-	pip install --no-cache-dir Sphinx sphinx-rtd-theme && \
-	mkdir -p /run/nginx
+RUN apk add --no-cache tini make && \
+	pip install --no-cache-dir Sphinx sphinx-rtd-theme sphinx-autobuild sphinxcontrib-httpdomain
 
-ADD supervisord.conf /etc/
-ADD nginx.conf /etc/nginx/conf.d/default.conf
-ADD autoreload /usr/bin/
+WORKDIR /docs
 
-WORKDIR /doc
+VOLUME ["/docs"]
 
-VOLUME ["/doc"]
+EXPOSE 5000
 
-EXPOSE 80
+ENTRYPOINT ["/sbin/tini", "--"]
 
-CMD ["supervisord"]
+CMD ["sh", "-c", "/usr/bin/sphinx-autobuild -H 0.0.0.0 -p 5000 -i '.*' -i '*~' -i '_build/*' -r '\\d+' /docs /docs/_build/html"]
